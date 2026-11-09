@@ -1,0 +1,35 @@
+name: Build EK Messenger APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'EK_Messenger_Android_Project.zip'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract project
+        run: unzip EK_Messenger_Android_Project.zip
+
+      - name: Build APK
+        run: |
+          cd EK_Messenger_Android
+          gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EK-Messenger-APK
+          path: EK_Messenger_Android/app/build/outputs/apk/debug/*.apk
